@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/*
+ * Theme "Cơm Chung" - tươi sáng, thân thiện kiểu app nội bộ văn phòng.
+ * Cam ấm làm màu chính (màu cơm rang 🍳), xanh lá cho trạng thái tích cực.
+ */
+@theme {
+  --color-rice-50: #fff8f0;
+  --color-rice-100: #ffefd9;
+  --color-rice-200: #ffdcae;
+  --color-rice-300: #ffc378;
+  --color-rice-400: #ffa040;
+  --color-rice-500: #ff8319;
+  --color-rice-600: #f0680a;
+  --color-rice-700: #c74f0b;
+  --color-rice-800: #9e3f11;
+  --color-rice-900: #7f3512;
+
+  --font-sans: var(--font-be-vietnam), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background-color: #fdf9f3;
+  color: #3d3229;
+}
