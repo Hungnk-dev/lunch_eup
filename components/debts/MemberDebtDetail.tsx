@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Member, MemberMealRow, Payment } from "@/types";
 import { formatVND, formatDate } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
+import { PaymentQR } from "@/components/payments/PaymentQR";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 
@@ -30,11 +31,13 @@ export function MemberDebtDetail({
   meals,
   payments,
   isAdmin,
+  qrUrl,
 }: {
   member: Member;
   meals: MemberMealRow[];
   payments: Payment[];
   isAdmin: boolean;
+  qrUrl: string | null;
 }) {
   const [tab, setTab] = useState<Tab>("meals");
 
@@ -121,6 +124,8 @@ export function MemberDebtDetail({
           </Link>
         )}
       </Card>
+
+      {balance > 0 && <PaymentQR src={qrUrl} amount={formatVND(balance)} />}
 
       {/* Tabs */}
       <div className="flex gap-2 overflow-x-auto">

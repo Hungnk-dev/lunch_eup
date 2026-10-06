@@ -39,6 +39,7 @@ export default async function DebtsPage() {
       ) : (
         <DebtBoard
           funHeader={group.fun_header ?? group.name}
+          qrUrl={group.payment_qr_url}
           debts={debts}
         />
       )}

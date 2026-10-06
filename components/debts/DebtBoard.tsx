@@ -7,6 +7,7 @@ import type { MemberDebt } from "@/types";
 import { buildDebtSummaryText, totalOutstanding } from "@/lib/debt";
 import { formatVND } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
+import { PaymentQR } from "@/components/payments/PaymentQR";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -22,9 +23,11 @@ const FILTERS: { key: Filter; label: string }[] = [
 export function DebtBoard({
   funHeader,
   debts,
+  qrUrl,
 }: {
   funHeader: string;
   debts: MemberDebt[];
+  qrUrl: string | null;
 }) {
   const [filter, setFilter] = useState<Filter>("all");
 
@@ -57,6 +60,8 @@ export function DebtBoard({
           📋 Copy gửi nhóm
         </Button>
       </Card>
+
+      {outstanding > 0 && <PaymentQR src={qrUrl} />}
 
       {/* Filter */}
       <div className="flex gap-2">

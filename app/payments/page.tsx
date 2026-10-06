@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 import { PaymentList } from "@/components/payments/PaymentList";
+import { PaymentQR } from "@/components/payments/PaymentQR";
 import { getGroup, getPayments } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +33,11 @@ export default async function PaymentsPage() {
           </Link>
         }
       />
+      {group.payment_qr_url && (
+        <div className="mb-4">
+          <PaymentQR src={group.payment_qr_url} />
+        </div>
+      )}
       {payments.length === 0 ? (
         <EmptyState
           emoji="🪙"

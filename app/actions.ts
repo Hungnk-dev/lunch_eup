@@ -47,6 +47,85 @@ export async function updateGroup(
   }
 }
 
+const QR_BUCKET = "payment-qr";
+const QR_MAX_BYTES = 5 * 1024 * 1024;
+const QR_TYPES: Record<string, string> = {
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/webp": "webp",
+};
+
+/** Xoá toàn bộ ảnh QR cũ của nhóm trong storage */
+async function clearQrFiles(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  groupId: string
+) {
+  const { data: files } = await supabase.storage.from(QR_BUCKET).list(groupId);
+  if (files?.length) {
+    await supabase.storage
+      .from(QR_BUCKET)
+      .remove(files.map((f) => `${groupId}/${f.name}`));
+  }
+}
+
+export async function updatePaymentQR(
+  groupId: string,
+  formData: FormData
+): Promise<ActionResult> {
+  try {
+    const { supabase } = await requireUser();
+    const file = formData.get("file");
+    if (!(file instanceof File) || file.size === 0)
+      return { success: false, error: "Chưa chọn ảnh" };
+    const ext = QR_TYPES[file.type];
+    if (!ext) return { success: false, error: "Chỉ nhận ảnh PNG, JPG hoặc WEBP" };
+    if (file.size > QR_MAX_BYTES)
+      return { success: false, error: "Ảnh tối đa 5MB thôi nhé" };
+
+    await clearQrFiles(supabase, groupId);
+
+    // Tên file mới mỗi lần để tránh cache ảnh cũ
+    const path = `${groupId}/qr-${Date.now()}.${ext}`;
+    const { error: uploadError } = await supabase.storage
+      .from(QR_BUCKET)
+      .upload(path, file, { contentType: file.type });
+    if (uploadError) return { success: false, error: uploadError.message };
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(QR_BUCKET).getPublicUrl(path);
+
+    const { error } = await supabase
+      .from("groups")
+      .update({ payment_qr_url: publicUrl, updated_at: new Date().toISOString() })
+      .eq("id", groupId);
+
+    if (error) return { success: false, error: error.message };
+    revalidatePath("/", "layout");
+    return { success: true, message: "Đã cập nhật mã QR" };
+  } catch (e) {
+    return { success: false, error: (e as Error).message };
+  }
+}
+
+export async function removePaymentQR(groupId: string): Promise<ActionResult> {
+  try {
+    const { supabase } = await requireUser();
+    await clearQrFiles(supabase, groupId);
+
+    const { error } = await supabase
+      .from("groups")
+      .update({ payment_qr_url: null, updated_at: new Date().toISOString() })
+      .eq("id", groupId);
+
+    if (error) return { success: false, error: error.message };
+    revalidatePath("/", "layout");
+    return { success: true, message: "Đã xoá mã QR" };
+  } catch (e) {
+    return { success: false, error: (e as Error).message };
+  }
+}
+
 // ---------- THÀNH VIÊN ----------
 
 export async function addMember(

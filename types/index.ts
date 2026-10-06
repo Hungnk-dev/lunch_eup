@@ -4,6 +4,7 @@ export interface Group {
   id: string;
   name: string;
   fun_header: string | null;
+  payment_qr_url: string | null;
   created_at: string;
   updated_at: string | null;
 }

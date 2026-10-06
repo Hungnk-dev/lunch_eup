@@ -12,6 +12,7 @@ thanh toán. Cả nhóm xem công nợ qua link chung không cần đăng nhập
 - 🍜 Ghi bữa ăn: chọn ngày, người đặt, tổng tiền, tick người ăn → tự chia đều (làm tròn 500đ/người); gắn kèm món/quán (tự gợi ý món đã chốt hôm nay)
 - 💰 Bảng công nợ: đã ăn / đã trả / còn nợ, filter, highlight người nợ, "Sạch nợ 🎉"
 - 💸 Ghi nhận thanh toán (cho phép trả một phần), lịch sử thanh toán
+- 📱 Mã QR chuyển khoản: upload ở Cài đặt, hiện ở bảng công nợ cho mọi người quét
 - 👥 Quản lý thành viên: thêm, sửa, ẩn (soft-delete, giữ lịch sử nợ), khôi phục
 - 📋 Copy danh sách công nợ để gửi Zalo/Telegram/Slack
 - ⚙️ Đổi tên nhóm + "header vui" ("Biệt đội cơm trưa", "Hội đói bụng"...)
@@ -28,6 +29,7 @@ thanh toán. Cả nhóm xem công nợ qua link chung không cần đăng nhập
 2. Chạy lần lượt các file trong `supabase/migrations/` theo thứ tự (copy nội dung từng file và bấm **Run**):
    - [`001_init.sql`](supabase/migrations/001_init.sql) — 5 bảng chính (`groups`, `members`, `meal_sessions`, `meal_participants`, `payments`), RLS, seed 1 nhóm mặc định.
    - [`002_food_picker.sql`](supabase/migrations/002_food_picker.sql) — tính năng "Hôm nay ăn gì?": bảng `foods`, `food_picks`, thêm cột `food_id`/`food_name_snapshot` vào `meal_sessions`.
+   - [`003_payment_qr.sql`](supabase/migrations/003_payment_qr.sql) — ảnh QR chuyển khoản: cột `groups.payment_qr_url` + storage bucket `payment-qr`.
 
 > ⚠️ **Đã cài app từ trước?** Sau khi pull code mới có tính năng "Hôm nay ăn gì?",
 > bạn **bắt buộc phải chạy `002_food_picker.sql`** trong Supabase SQL Editor,
